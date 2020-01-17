@@ -7,7 +7,7 @@ import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 
-import { auth } from './firebase/firebase.util';
+import { auth, createUserProfileDocument } from './firebase/firebase.util';
 
 // demo for linking and data
 // const HatsPage = () => (
@@ -30,10 +30,27 @@ class App extends React.Component {
   // our application listening to authentication
   // state changes on our firebase backend
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user });
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+      // we are checking if a user is signing in
+      // if there is we create a user Ref
+      if(userAuth) {
+        const userRef = createUserProfileDocument(userAuth);
 
-      console.log(user);
+        (await userRef).onSnapshot(snapShot => {
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data()
+            }
+          });
+
+          console.log(this.state);
+        });
+      }
+      else {
+        this.setState({currentUser: userAuth});
+      }
+
     })
   }
   // this will close the subscription
