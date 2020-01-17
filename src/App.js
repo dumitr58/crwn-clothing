@@ -43,8 +43,8 @@ class App extends React.Component {
               ...snapShot.data()
             }
           });
-
-          console.log(this.state);
+          // used to see who logged in
+          //console.log(this.state);
         });
       }
       else {
