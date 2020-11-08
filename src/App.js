@@ -14,12 +14,7 @@ import { auth, createUserProfileDocument } from './firebase/firebase.util';
 import { setCurrentUser } from './redux/user/user.actions';
 import { selectCurrentUser } from './redux/user/user.selectors';
 
-// demo for linking and data
-// const HatsPage = () => (
-//   <div>
-//     <h1>Hats Page</h1>
-//   </div>
-// )
+
 
 class App extends React.Component {
   // aware of the sign in change
