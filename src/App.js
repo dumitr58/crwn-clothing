@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -10,50 +10,16 @@ import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import CheckoutPage from './pages/checkout/checkout.component';
 
-// import { auth, createUserProfileDocument } from './firebase/firebase.util';
-// import { setCurrentUser } from './redux/user/user.actions';
 import { selectCurrentUser } from './redux/user/user.selectors';
 import { checkUserSession } from './redux/user/user.actions';
 
 
 
-class App extends React.Component {
-  // aware of the sign in change
-  unsubscribeFromAuth = null
-  // our application listening to authentication
-  // state changes on our firebase backend
-  componentDidMount() {
-    const { checkUserSession } = this.props;
-    checkUserSession();
-    // const {setCurrentUser} = this.props;
-
-    // this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-    //   // we are checking if a user is signing in
-    //   // if there is we create a user Ref
-    //   if(userAuth) {
-    //     const userRef = createUserProfileDocument(userAuth);
-
-    //     (await userRef).onSnapshot(snapShot => {
-    //       setCurrentUser({
-    //           id: snapShot.id,
-    //           ...snapShot.data()
-    //         });
-    //       });
-    //       // used to see who logged in
-    //       //console.log(this.state);
-    //   }
-    //   else {
-    //     setCurrentUser(userAuth);
-    //   }
-
-    // });
-  }
-  // this will close the subscription
-  componentWillUnmount() {
-    this.unsubscribeFromAuth();
-  }
+const App = ({ checkUserSession, currentUser }) => {
+ useEffect(() => {
+  checkUserSession()
+ }, [checkUserSession]);
   
-  render() {
     return (
       <div>
         <Header/>
@@ -61,14 +27,12 @@ class App extends React.Component {
         <Route exact path='/' component={HomePage}/>
         <Route path='/shop' component={ShopPage}/>
         <Route exact path='/signin' 
-              render={() => this.props.currentUser ? (<Redirect to='/'/>) : (<SignInAndSignUpPage/>)}/>
+              render={() => currentUser ? (<Redirect to='/'/>) : (<SignInAndSignUpPage/>)}/>
         <Route exact path='/checkout' component={CheckoutPage}/>
         </Switch>
       </div>
     );
   }
-  
-}
 
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser

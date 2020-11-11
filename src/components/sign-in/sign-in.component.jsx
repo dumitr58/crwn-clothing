@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import './sign-in.styles.scss';
@@ -8,21 +8,13 @@ import CustomButton from '../custom-button/custom-button.component';
 
 import { googleSignInStart, emailSignInStart } from '../../redux/user/user.actions';
 
-class SignIn extends React.Component{
-    constructor(props) {
-        super(props);
-    
+const SignIn = ({ emailSignInStart, googleSignInStart }) => {
 
-    this.state = {
-        email: '',
-        password: ''
-    }
-}
+    const [userCredentials, setCredentials ] = useState({ email: '', password: ''})
 
-handleSubmit = async event => {
+    const { email, password } = userCredentials;
+    const handleSubmit = async event => {
     event.preventDefault();
-    const { emailSignInStart } = this.props;
-    const { email, password } = this.state;
 
     emailSignInStart(email, password);
 
@@ -36,32 +28,30 @@ handleSubmit = async event => {
 
 }
 
-handleChange = event => {
+const handleChange = event => {
     const { value, name } = event.target;
 
-    this.setState({ [name]: value })
+    setCredentials({...userCredentials, [name]: value })
 }
 
-render () {
-    const { googleSignInStart } = this.props;
     return(
         <div className='sign-in'>
             <h2>I already have an account</h2>
             <span>Sign in with your email and password</span>
 
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={handleSubmit}>
                 <FormInput 
                 name="email" 
                 type="email" 
-                handleChange={this.handleChange} 
-                value={this.state.email}
+                handleChange={handleChange} 
+                value={email}
                 label='email' 
                 required/>
                 <FormInput 
                 name="password" 
                 type="password" 
-                value={this.state.password} 
-                handleChange={this.handleChange}
+                value={password} 
+                handleChange={handleChange}
                 label='password'
                 required/>
                 <div className='buttons'>
@@ -74,7 +64,6 @@ render () {
             </form>
         </div>
     );
-}
 }
 
 const mapDispatchToProps = dispatch => ({
