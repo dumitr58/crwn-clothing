@@ -10,9 +10,10 @@ import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import CheckoutPage from './pages/checkout/checkout.component';
 
-import { auth, createUserProfileDocument } from './firebase/firebase.util';
-import { setCurrentUser } from './redux/user/user.actions';
+// import { auth, createUserProfileDocument } from './firebase/firebase.util';
+// import { setCurrentUser } from './redux/user/user.actions';
 import { selectCurrentUser } from './redux/user/user.selectors';
+import { checkUserSession } from './redux/user/user.actions';
 
 
 
@@ -22,28 +23,30 @@ class App extends React.Component {
   // our application listening to authentication
   // state changes on our firebase backend
   componentDidMount() {
-    const {setCurrentUser} = this.props;
+    const { checkUserSession } = this.props;
+    checkUserSession();
+    // const {setCurrentUser} = this.props;
 
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-      // we are checking if a user is signing in
-      // if there is we create a user Ref
-      if(userAuth) {
-        const userRef = createUserProfileDocument(userAuth);
+    // this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+    //   // we are checking if a user is signing in
+    //   // if there is we create a user Ref
+    //   if(userAuth) {
+    //     const userRef = createUserProfileDocument(userAuth);
 
-        (await userRef).onSnapshot(snapShot => {
-          setCurrentUser({
-              id: snapShot.id,
-              ...snapShot.data()
-            });
-          });
-          // used to see who logged in
-          //console.log(this.state);
-      }
-      else {
-        setCurrentUser(userAuth);
-      }
+    //     (await userRef).onSnapshot(snapShot => {
+    //       setCurrentUser({
+    //           id: snapShot.id,
+    //           ...snapShot.data()
+    //         });
+    //       });
+    //       // used to see who logged in
+    //       //console.log(this.state);
+    //   }
+    //   else {
+    //     setCurrentUser(userAuth);
+    //   }
 
-    })
+    // });
   }
   // this will close the subscription
   componentWillUnmount() {
@@ -62,10 +65,6 @@ class App extends React.Component {
         <Route exact path='/checkout' component={CheckoutPage}/>
         </Switch>
       </div>
-      // This was before routing
-      // <div>
-      //   <HomePage></HomePage>;
-      // </div>
     );
   }
   
@@ -76,7 +75,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+  checkUserSession: () => dispatch(checkUserSession())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
